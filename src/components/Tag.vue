@@ -1,28 +1,18 @@
 <template>
   <p
-      class="skill-tag"
-      :class="{'big-tag': isBig}"
-      :style="{'fontSize': fontSize + 'px'}"
+      class="tag"
   >
-    {{ skillName }}
+    {{ tagText }}
   </p>
 </template>
 
 <script>
 export default {
-  name: 'SkillTag',
+  name: 'Tag',
   props: {
-    skillName: {
+    tagText: {
       type: String,
       required: true,
-    },
-    fontSize: {
-      type: Number,
-      default: 16,
-    },
-    isBig: {
-      type: Boolean,
-      default: false,
     },
   },
 };
@@ -30,9 +20,8 @@ export default {
 
 <style lang="scss" scoped>
 @import '../assets/colors';
-@import '../assets/styles/breakpoints';
 
-.skill-tag {
+.tag {
   border: 1px solid $blue;
   white-space: nowrap;
   max-width: 186px;
@@ -50,29 +39,6 @@ export default {
     color: $white;
     background-color: $blue;
     transition: all .27s;
-  }
-}
-
-@media (max-width: $tablet) {
-  .skill-tag {
-    height: 18px;
-    font-size: 14px !important;
-  }
-}
-
-@media (max-width: $mobile) {
-  .skill-tag {
-    box-sizing: border-box;
-    height: 15px;
-    font-size: 12px;
-    line-height: 10px;
-    padding: 2px 15px;
-  }
-
-  .big-tag {
-    height: 21px;
-    font-size: clamp(16px, 2.7vw, 18px) !important;
-    padding: 5px 15px;
   }
 }
 </style>

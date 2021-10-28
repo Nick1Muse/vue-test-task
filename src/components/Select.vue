@@ -1,12 +1,10 @@
 <template>
-  <div class="select" :class="{'main-select': isMainSelect}">
+  <div class="select" @click="openSelect">
     <input
-        @click="openSelect"
         type="text"
         readonly="readonly"
         :placeholder="placeholder"
         v-model="searchValue"
-        :style="{'maxWidth': width + 'px', 'fontSize': fontSize +'px', 'minHeight': minHeight + 'px'}"
     />
     <img
         class="angle-arrow-down"
@@ -21,79 +19,54 @@
       <li
           v-for="(currentItem, i) in items"
           class="item"
-          @click="setSelectValue($t(currentItem.optionNameTranslationPath), i)"
+          @click="setSelectValue(currentItem, i)"
           :key="i + currentItem"
       >
-        {{ $t(currentItem.optionNameTranslationPath) }}
+        {{ currentItem }}
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-import closeDropdownByClickOutside from '../mixins/closeDropdownByClickOutside';
-
 export default {
   name: 'Select',
   data() {
     return {
       isDropdownOpen: false,
-      searchValue: '' || this.value,
+      searchValue: '',
     };
   },
-  mixins: [closeDropdownByClickOutside],
   props: {
-    value: {
-      type: String,
-      default: '',
-    },
     items: {
       type: Array,
-      default: () => [],
+      required: true,
     },
     placeholder: {
       type: String,
       default: '',
     },
-    optionsListName: {
-      type: String,
-      required: true,
-    },
     fieldName: {
       type: String,
       required: true,
-    },
-    fontSize: {
-      type: Number,
-      default: 24,
-    },
-    width: {
-      type: Number,
-      default: 500,
-    },
-    minHeight: {
-      type: Number,
-      default: 40,
-    },
-    isMainSelect: {
-      type: Boolean,
-      default: false,
     },
   },
   mounted() {
     document.addEventListener('click', this.closeDropdownByClickOutside);
   },
   methods: {
-    setSelectValue(value, index) {
+    closeDropdownByClickOutside(e) {
+      if (!this.$el.contains(e.target)) {
+        this.isDropdownOpen = false;
+      }
+    },
+    setSelectValue(value) {
       this.searchValue = value;
       this.isDropdownOpen = false;
-      this.$emit('onSelect', value, this.fieldName, this.optionsListName, index);
+      this.$emit('onSelect', value, this.fieldName);
     },
     openSelect() {
       this.isDropdownOpen = !this.isDropdownOpen;
-    },
-    clearInput() {
-      this.searchValue = '';
     },
   },
 };
@@ -101,7 +74,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../assets/colors';
-@import '../assets/styles/breakpoints';
 
 * {
   box-sizing: border-box;
@@ -109,15 +81,10 @@ export default {
 
 .select {
   position: relative;
-
-  .input-label {
-    font-size: 15px;
-    padding: 0 5px;
-    width: 100px;
-  }
+  max-width: 400px;
 
   ::placeholder {
-    font-size: clamp(14px, 2vw, 18px);
+    font-size: clamp(14px, 2vw, 16px);
   }
 
   input {
@@ -127,26 +94,11 @@ export default {
     background-color: $inputBackground;
     border: none;
     outline: none;
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 400;
     padding: 15px 0 15px 25px;
     border-radius: 5px;
     cursor: pointer;
-
-    &:disabled {
-      background-color: $disabled;
-    }
-  }
-}
-
-.main-select {
-  ::placeholder {
-    color: $black;
-    font-size: 18px;
-  };
-
-  input {
-    padding: 10px 0 10px 25px;
   }
 }
 
@@ -156,6 +108,7 @@ export default {
   position: absolute;
   right: 20px;
   bottom: 34%;
+  cursor: pointer;
   transition: transform 0.2s;
 
   &.angle-rotate {
@@ -183,45 +136,14 @@ export default {
   font-size: 18px;
   font-weight: 400;
   height: 40px;
-  border-bottom: 1px solid $grayBorder;
+  border-bottom: 1px solid $gray;
   border-top: 0;
   padding: 9px 0 10px 20px;
   cursor: pointer;
 
   &:hover {
-    color: $blue;
+    color: darken($inputBackground, 60);
     transition: color .3s;
-  }
-}
-
-@media (max-width: 768px) {
-  .select {
-    input {
-      height: 45px;
-      padding: 15px 0 16px 15px;
-    }
-  }
-}
-
-@media (max-width: $mobile) {
-
-  .select {
-    max-width: 374px;
-
-    ::placeholder {
-      font-size: 16px;
-    }
-
-    input {
-      height: 38px;
-      font-size: 16px;
-      padding: 15px 0 16px 15px;
-      box-sizing: border-box;
-    }
-
-    .item {
-      font-size: 16px;
-    }
   }
 }
 </style>
